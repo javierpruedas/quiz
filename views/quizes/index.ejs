@@ -1,5 +1,10 @@
+<form method="get" value="<% busca %>">
+    Introduzca el texto que quiere buscar:
+    <input type="text" name="search" value="Busqueda">
+    <input type="submit" value="Enviar">
+</form>
 <table>
 <% var i; for (i=0; i < quizes.length; i++) { %>
-<tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr>
+	<tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr>
 <% } %>
 </table>
