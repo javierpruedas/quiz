@@ -42,10 +42,10 @@ app.use(function(req, res, next) {
 
 // Auto logout
 app.use(function(req, res, next){
-    if(req.session.user){
-        var now = new Date().getTime();
-        if (now - req.session.user.time < 120000){
-            req.session.user.time = now;
+    if (req.session.user) {
+        var date = new Date().getTime();
+        if (date - req.session.user.time < 120000) {
+            req.session.user.time = date;
         } else {
             sessionController.destroy(req, res);
         }
