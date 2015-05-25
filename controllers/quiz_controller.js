@@ -29,14 +29,14 @@ exports.load = function(req, res, next, quizId) {
   ).catch(function(error) {next(error);});
 };
 // GET /quizes
-exports.index = function(req, res) {
+exports.index = function(req, res, next) {
   var options = {};
   var busca = req.query.search || '';
   var cambia = "%" + busca.replace(/ +/g, "%") + "%";
   if(req.user){
     options.where = {UserId: req.user.id}
   }
-  models.Quiz.findAll({where: sequelize.and(["pregunta like ?", cambia], options.where)}).then(function(quizes, busca) {
+  models.Quiz.findAll({where: sequelize.and(["pregunta like ?", cambia], options.where), include: [{model: models.User, as: 'Favs'}]}).then(function(quizes, busca) {
     //Ordena alfabéticamente las preguntas antes de ser mostradas
     function compare(a, b){
       if (a.pregunta < b.pregunta) return -1;
@@ -44,12 +44,28 @@ exports.index = function(req, res) {
       return 0;
     }
     quizes.sort(compare);
+    if ( req.session.user){
+      quizes.forEach(function(quiz){
+        quiz.fav = quiz.Favs.some(function(user){
+          return (user.id === req.session.user.id);
+        });
+      });
+    }
     res.render('quizes/index.ejs', { quizes: quizes, busca: busca, errors: []});
   }).catch(function(error) { next(error);});
 };
 // GET /quizes/:id
-exports.show = function(req, res) {
-  res.render('quizes/show', { quiz: req.quiz,errors: []});
+exports.show = function(req, res, next) {
+  if(req.session.user){
+    req.quiz.getFavs().then(function(users){
+      req.quiz.fav = users.some(function(user){
+        return (user.id === req.session.user.id);
+      });
+      res.render('quizes/show',{quiz: req.quiz, errors: []});
+    }).catch(function(error){next(error)});
+  } else {
+    res.render('quizes/show', { quiz: req.quiz,errors: []});
+  }
 };
 // GET /quizes/:id/answer
 exports.answer = function(req, res) {

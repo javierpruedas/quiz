@@ -1,0 +1,36 @@
+<table>
+<% var i; for(i=0; i < quizes.length; i++){ %>
+  <tr>
+  <% if(session.user){ %>
+    <td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+    <% if(quizes[i].fav){ %>
+    <td>
+      <form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=delete">
+        <button type="submit" onClick="return confirm('Borrar favorito: <%= quizes[i].pregunta %>');">
+          <img src="/images/golden.ico" alt="Estrella amarilla">
+        </button>
+      </form>
+    </td>
+    <% } else { %>
+     <td>
+       <form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=put">
+	 <button type="submit">
+	   <img src="/images/grey.ico" alt="Estrella gris">
+	 </button>
+       </form>
+     </td>
+    <% }
+    }
+     if(session.user.isAdmin || session.user.id === quizes[i].UserId){ %>
+    <td><a href="/quizes/<%= quizes[i].id %>/edit"><button>Editar</button></a></td>
+    <td>
+      <form method="post" action="/quizes/<%= quizes[i].id %>/?_method=delete">
+        <button type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">
+	  Borrar
+	</button>
+      </form>
+    </td>
+  <% } %>
+  </tr>
+<% } %>
+</table>

@@ -9,6 +9,8 @@ var userController = require('../controllers/user_controller');
 
 var statisticsController = require('../controllers/statistics_controller');
 
+var favouritesController = require('../controllers/favourites_controller');
+
 // Página de entrada (home page)
 router.get('/', function(req, res) {
 	res.render('index', { title: 'Quiz', errors: []});
@@ -35,6 +37,11 @@ router.get('/user/:userId(\\d+)/edit', sessionController.loginRequired, userCont
 router.put('/user/:userId(\\d+)', sessionController.loginRequired, userController.ownershipRequired, userController.update);
 router.delete('/user/:userId(\\d+)', sessionController.loginRequired, userController.ownershipRequired, userController.destroy);
 router.get('/user/:userId(\\d+)/quizes', quizController.index);
+
+// Definición de rutas de favoritos
+router.get('/user/:userId(\\d+)/favourites', sessionController.loginRequired, favouritesController.index);
+router.delete('/user/:userId(\\d+)/favourites/:quizId(\\d+)', sessionController.loginRequired, favouritesController.destroy);
+router.put('/user/:userId(\\d+)/favourites/:quizId(\\d+)', sessionController.loginRequired, favouritesController.update);
 
 // Definición de rutas de /quizes
 router.get('/quizes',                      quizController.index);

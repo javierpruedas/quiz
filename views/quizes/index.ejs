@@ -1,4 +1,4 @@
-<form method="get" value="<% busca %>">
+<form method="get" action = "/quizes">
     Introduzca el texto que quiere buscar:
     <input type="text" name="search" value="Busqueda">
     <input type="submit" value="Enviar">
@@ -7,9 +7,26 @@
 	<% var i; for (i=0; i < quizes.length; i++) { %>
 		<tr>
 			<td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
-			<%if(session.user){
-				if (session.user.isAdmin || session.user.id === quizes[i].UserId) {%>
-				<td><a href="/quizes/<%= quizes[i].id %>/edit"><button>editar</button></a></td>
+			 <% if(session.user){ %>
+	  			<% if(quizes[i].fav){ %>
+	  			<td>
+	    			<form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=delete">
+	      				<button type="submit" onClick="return confirm('Eliminar favorito: <%= quizes[i].pregunta %>');">
+							<img src="/images/golden.ico" alt="Estrella amarilla"> 	
+	      				</button>
+	    			</form>
+	  			</td>
+         	<% } else { %>
+	  			<td>
+	    			<form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=put">
+	      				<button type="submit">
+							<img src="/images/grey.ico" alt="Estrella gris">	
+	      				</button>
+	    			</form>
+	  			</td>
+          <% }  
+          if(session.user.isAdmin || session.user.id === quizes[i].UserId){ %>
+    			<td><a href="/quizes/<%= quizes[i].id %>/edit"><button>Editar</button></a></td>
 				<td>
 					<form method="post" action="/quizes/<%= quizes[i].id %>?_method=delete">
 						<button type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">
