@@ -28,6 +28,9 @@ href='/stylesheets/smartphone.css' />
 <span> <a href="/quizes">Preguntas</a></span>
 <span> <a href = "/author">Autores</a></span>
 <span> <a href="/quizes/statistics">Estadísticas</a></span>
+<%if(session.user) {%>
+<span><a href="/user/<%=session.user.id%>/quizes">Mis Preguntas</a></span>
+<%}%>
 </nav>
 <section class="main" id="s1">
 	<% if (errors.length) { %>

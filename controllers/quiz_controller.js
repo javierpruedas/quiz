@@ -1,4 +1,5 @@
 var models = require('../models/models.js');
+var sequelize = require('sequelize');
 
 // MW que permite acciones solamente si el quiz objeto pertenece al usuario logeado o si es cuenta admin
 exports.ownershipRequired = function(req, res, next) {
@@ -29,9 +30,13 @@ exports.load = function(req, res, next, quizId) {
 };
 // GET /quizes
 exports.index = function(req, res) {
+  var options = {};
   var busca = req.query.search || '';
   var cambia = "%" + busca.replace(/ +/g, "%") + "%";
-  models.Quiz.findAll({where: ["pregunta like ?", cambia]}).then(function(quizes, busca) {
+  if(req.user){
+    options.where = {UserId: req.user.id}
+  }
+  models.Quiz.findAll({where: sequelize.and(["pregunta like ?", cambia], options.where)}).then(function(quizes, busca) {
     //Ordena alfabéticamente las preguntas antes de ser mostradas
     function compare(a, b){
       if (a.pregunta < b.pregunta) return -1;
